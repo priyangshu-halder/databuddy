@@ -1,0 +1,679 @@
+import React, { useState, useEffect, useRef, useMemo } from 'react';
+import { motion, useTransform, useSpring, useMotionValue, AnimatePresence, useScroll } from 'framer-motion';
+import { 
+  BrainCircuit, Globe2, Zap, MonitorPlay, 
+  TrendingUp, Megaphone, Palette, 
+  ArrowRight, ExternalLink, MousePointer2,
+  Users, ShieldCheck, Database, Cpu, Fingerprint, Menu, X,
+  Bot, Rocket, Sparkles, Code2, BarChart3, Layers, Leaf
+} from 'lucide-react';
+
+// --- STYLES ---
+const customStyles = `
+  @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+
+  :root {
+    --accent-blue: #2563eb;
+    --glow-blue: #60a5fa;
+    --deep-slate: #020617;
+    --soft-blue: #f0f9ff;
+  }
+
+  body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background: #f8fafc;
+    color: var(--deep-slate);
+    overflow-x: hidden;
+  }
+
+  .fluid-bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    background: 
+      radial-gradient(circle at 10% 10%, rgba(37, 99, 235, 0.25) 0%, transparent 45%),
+      radial-gradient(circle at 90% 90%, rgba(59, 130, 246, 0.2) 0%, transparent 45%),
+      radial-gradient(circle at 50% 50%, rgba(239, 246, 255, 1) 0%, transparent 100%);
+  }
+
+  .cyber-grid {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: linear-gradient(rgba(37, 99, 235, 0.08) 1px, transparent 1px),
+                      linear-gradient(90deg, rgba(37, 99, 235, 0.08) 1px, transparent 1px);
+    background-size: 50px 50px;
+    z-index: -1;
+    mask-image: radial-gradient(circle at center, black, transparent 80%);
+  }
+
+  .glass-card {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(20px) saturate(200%);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    box-shadow: 0 20px 50px -15px rgba(37, 99, 235, 0.15);
+    transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+  }
+
+  .glass-card:hover {
+    background: rgba(255, 255, 255, 0.9);
+    border-color: var(--glow-blue);
+    box-shadow: 0 30px 60px -12px rgba(37, 99, 235, 0.25);
+  }
+
+  @keyframes scrollRow {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+
+  .animate-scroll {
+    display: flex;
+    width: max-content;
+    animation: scrollRow 40s linear infinite;
+  }
+
+  .shine-effect {
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(
+      to right,
+      rgba(255, 255, 255, 0) 0%,
+      rgba(255, 255, 255, 0.6) 50%,
+      rgba(255, 255, 255, 0) 100%
+    );
+    transform: skewX(-25deg);
+    transition: 0.75s;
+  }
+
+  .showcase-card:hover .shine-effect {
+    left: 150%;
+  }
+
+  .orbit-path {
+    border: 1px dashed rgba(37, 99, 235, 0.4);
+    border-radius: 50%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  .leaf-particle {
+    position: absolute;
+    pointer-events: none;
+    z-index: 5;
+  }
+`;
+
+// --- COMPONENTS ---
+
+const FallingLeaves = () => {
+  const leaves = useMemo(() => {
+    return Array.from({ length: 20 }).map((_, i) => ({
+      id: i,
+      left: Math.random() * 100,
+      delay: Math.random() * 10,
+      duration: 12 + Math.random() * 10,
+      size: 12 + Math.random() * 25,
+    }));
+  }, []);
+
+  return (
+    <div className="absolute inset-0 overflow-hidden pointer-events-none">
+      {leaves.map((leaf) => (
+        <motion.div
+          key={leaf.id}
+          initial={{ y: -50, x: `${leaf.left}vw`, rotate: 0, opacity: 0 }}
+          animate={{
+            y: '110vh',
+            x: [`${leaf.left}vw`, `${leaf.left + 8}vw`, `${leaf.left - 8}vw`, `${leaf.left}vw`],
+            rotate: 720,
+            opacity: [0, 0.7, 0.7, 0],
+          }}
+          transition={{
+            duration: leaf.duration,
+            repeat: Infinity,
+            delay: leaf.delay,
+            ease: "linear",
+          }}
+          className="leaf-particle text-blue-400/30"
+        >
+          <Leaf size={leaf.size} />
+        </motion.div>
+      ))}
+    </div>
+  );
+};
+
+const HelloBot = () => {
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+  const [isWaving, setIsWaving] = useState(true);
+  const botRef = useRef(null);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setIsWaving(false), 3500);
+    
+    const handleMouseMove = (e) => {
+      if (!botRef.current) return;
+      const rect = botRef.current.getBoundingClientRect();
+      const centerX = rect.left + rect.width / 2;
+      const centerY = rect.top + rect.height / 2;
+      
+      const deltaX = e.clientX - centerX;
+      const deltaY = e.clientY - centerY;
+      
+      setMousePos({ 
+        x: Math.max(Math.min(deltaX / 15, 25), -25), 
+        y: Math.max(Math.min(deltaY / 15, 20), -20) 
+      });
+    };
+
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      clearTimeout(timer);
+    };
+  }, []);
+
+  return (
+    <div ref={botRef} className="relative w-80 h-96 flex flex-col items-center justify-center scale-110">
+      <div className="orbit-path w-[440px] h-[440px] border-blue-400/20"></div>
+      <motion.div 
+        animate={{ rotate: 360 }} 
+        transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+        className="orbit-path w-[360px] h-[360px] border-blue-500/30 border-t-transparent"
+      ></motion.div>
+
+      <motion.div
+        animate={{ 
+          rotateY: mousePos.x, 
+          rotateX: -mousePos.y,
+          y: [0, -10, 0]
+        }}
+        transition={{ 
+          rotateY: { type: "spring", stiffness: 100, damping: 20 },
+          rotateX: { type: "spring", stiffness: 100, damping: 20 },
+          y: { repeat: Infinity, duration: 4, ease: "easeInOut" }
+        }}
+        className="relative z-20 w-64 h-64 bg-gradient-to-br from-blue-700 via-blue-600 to-indigo-900 rounded-[3.5rem] shadow-3xl border-8 border-white/30 flex flex-col items-center justify-center p-6 overflow-hidden"
+      >
+        {/* Humanoid Eyebrows */}
+        <div className="flex gap-12 mb-3 w-full justify-center">
+          <motion.div 
+            animate={{ 
+              rotate: mousePos.y > 0 ? -15 : 10, 
+              y: mousePos.y > 0 ? 5 : -5 
+            }}
+            transition={{ type: "spring", stiffness: 300 }}
+            className="w-14 h-3 bg-slate-900 rounded-full origin-right"
+          />
+          <motion.div 
+            animate={{ 
+              rotate: mousePos.y > 0 ? 15 : -10, 
+              y: mousePos.y > 0 ? 5 : -5 
+            }}
+            transition={{ type: "spring", stiffness: 300 }}
+            className="w-14 h-3 bg-slate-900 rounded-full origin-left"
+          />
+        </div>
+
+        {/* Eyes */}
+        <div className="flex gap-10">
+          {[0, 1].map((i) => (
+            <div key={i} className="w-14 h-14 bg-slate-950 rounded-full flex items-center justify-center overflow-hidden border-2 border-white/10 shadow-inner">
+               <motion.div 
+                 animate={{ x: mousePos.x / 4, y: mousePos.y / 4 }}
+                 className="w-7 h-7 bg-cyan-400 rounded-full shadow-[0_0_20px_cyan]"
+               />
+            </div>
+          ))}
+        </div>
+        
+        {/* Dynamic Mouth - Animated Reaction */}
+        <motion.div 
+           animate={{ 
+             width: isWaving ? '40px' : (Math.abs(mousePos.x) > 15 ? '30px' : '50px'),
+             height: isWaving ? '20px' : (Math.abs(mousePos.y) > 10 ? '25px' : '8px'),
+             borderRadius: (isWaving || Math.abs(mousePos.y) > 10) ? '50%' : '40px',
+             y: mousePos.y / 2 + 10,
+             scale: Math.abs(mousePos.x) > 20 ? 1.2 : 1
+           }}
+           transition={{ type: "spring", stiffness: 200, damping: 15 }}
+           className="bg-slate-900 mt-6 shadow-inner flex items-center justify-center overflow-hidden"
+        >
+           <motion.div 
+             animate={{ opacity: isWaving ? 1 : 0 }}
+             className="w-full h-1 bg-blue-400/30 blur-sm"
+           />
+        </motion.div>
+
+        <div className="absolute inset-0 bg-gradient-to-tr from-white/10 to-transparent pointer-events-none rounded-[3rem]"></div>
+      </motion.div>
+
+      <AnimatePresence>
+        {isWaving && (
+          <motion.div
+            initial={{ rotate: -120, opacity: 0, x: 120 }}
+            animate={{ rotate: [0, -40, 0, -40, 0], opacity: 1, x: 90 }}
+            exit={{ opacity: 0, x: 150 }}
+            transition={{ duration: 3, times: [0, 0.2, 0.4, 0.6, 1] }}
+            className="absolute right-[-60px] top-1/2 z-30"
+          >
+            <div className="relative">
+              <div className="w-28 h-14 bg-blue-500 rounded-full border-4 border-white shadow-2xl flex items-center justify-center font-black text-white text-sm">
+                HELLO! 👋
+              </div>
+              <div className="absolute top-full left-1/2 -translate-x-1/2 w-4 h-4 bg-blue-500 border-r-4 border-b-4 border-white rotate-45 -mt-2"></div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <motion.div 
+        animate={{ scale: [1, 1.3, 1], opacity: [0.2, 0.4, 0.2] }}
+        transition={{ repeat: Infinity, duration: 4 }}
+        className="absolute w-60 h-60 bg-blue-400 blur-[100px] -z-10 rounded-full"
+      />
+    </div>
+  );
+};
+
+const MagneticButton = ({ children, className }) => {
+  const [position, setPosition] = useState({ x: 0, y: 0 });
+  const ref = useRef(null);
+
+  const handleMouse = (e) => {
+    const { clientX, clientY } = e;
+    const { left, top, width, height } = ref.current.getBoundingClientRect();
+    const x = clientX - (left + width / 2);
+    const y = clientY - (top + height / 2);
+    setPosition({ x: x * 0.45, y: y * 0.45 });
+  };
+
+  const reset = () => setPosition({ x: 0, y: 0 });
+
+  return (
+    <motion.div
+      ref={ref}
+      onMouseMove={handleMouse}
+      onMouseLeave={reset}
+      animate={{ x: position.x, y: position.y }}
+      transition={{ type: "spring", stiffness: 200, damping: 12, mass: 0.1 }}
+      className={className}
+    >
+      {children}
+    </motion.div>
+  );
+};
+
+const Navbar = () => {
+  const [isScrolled, setIsScrolled] = useState(false);
+  useEffect(() => {
+    const handleScroll = () => setIsScrolled(window.scrollY > 20);
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  return (
+    <motion.nav 
+      initial={{ y: -100 }}
+      animate={{ y: 0 }}
+      className={`fixed w-full z-50 transition-all duration-700 ${isScrolled ? 'bg-white/90 backdrop-blur-2xl py-4 border-b border-blue-100 shadow-xl' : 'bg-transparent py-8'}`}
+    >
+      <div className="max-w-7xl mx-auto px-6 md:px-12 flex justify-between items-center">
+        <div className="flex items-center gap-4 group cursor-pointer">
+          <motion.div 
+            whileHover={{ rotate: 360, scale: 1.15 }}
+            transition={{ duration: 0.8, ease: "anticipate" }}
+            className="w-14 h-14 bg-gradient-to-br from-blue-600 to-blue-800 rounded-2xl flex items-center justify-center text-white shadow-2xl shadow-blue-500/50"
+          >
+            <Bot size={32} strokeWidth={2.5} />
+          </motion.div>
+          <span className="text-3xl font-black text-slate-900 tracking-tighter group-hover:text-blue-600 transition-colors">DataBuddy</span>
+        </div>
+        <div className="hidden md:flex items-center gap-10 font-bold text-slate-500">
+          {['Home', 'About', 'Services'].map((item) => (
+            <a key={item} href={`#${item.toLowerCase()}`} className="relative hover:text-blue-600 transition-colors group">
+              {item}
+              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-600 group-hover:w-full transition-all duration-300"></span>
+            </a>
+          ))}
+          <MagneticButton className="cursor-pointer">
+            <button className="bg-blue-600 text-white px-10 py-4 rounded-2xl font-black hover:bg-blue-700 transition-all shadow-xl shadow-blue-500/40">
+              Start Growing
+            </button>
+          </MagneticButton>
+        </div>
+      </div>
+    </motion.nav>
+  );
+};
+
+const HeroSection = () => {
+  return (
+    <section id="home" className="relative pt-48 pb-40 overflow-hidden">
+      <FallingLeaves />
+      <div className="absolute top-0 right-0 w-2/3 h-full opacity-30 -z-10 bg-gradient-to-b from-blue-200/40 to-transparent"></div>
+      
+      <div className="max-w-7xl mx-auto px-6 relative z-30 grid lg:grid-cols-2 gap-20 items-center">
+        <motion.div
+          initial={{ opacity: 0, x: -100 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 1.2, ease: "easeOut" }}
+        >
+          <motion.div 
+            whileHover={{ scale: 1.05, x: 10 }}
+            className="inline-flex items-center gap-3 px-6 py-2.5 rounded-full bg-blue-700 text-white font-black text-xs mb-10 shadow-lg shadow-blue-600/30 uppercase tracking-[0.2em]"
+          >
+            <Sparkles size={16} /> Build smarter business with ai
+          </motion.div>
+          
+          <h1 className="text-7xl md:text-[8.5rem] font-black tracking-tight text-slate-900 mb-10 leading-[0.88] pr-12 overflow-visible">
+            <span className="block hover:translate-x-6 hover:text-blue-600 transition-all duration-500 cursor-default py-2">Your Smartest</span>
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-800 via-blue-500 to-cyan-500 drop-shadow-sm hover:skew-x-3 transition-all block py-2 whitespace-nowrap pr-4">Digital Growth </span>
+            {/* Added padding-right (pr-20) and a subtle margin adjustment to ensure "Partner" isn't clipped */}
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-indigo-600 block py-2 pr-20 -mr-10">Partner.</span>
+          </h1>
+          
+          <p className="text-2xl text-slate-600 max-w-xl mb-14 font-medium leading-relaxed border-l-8 border-blue-600 pl-10">
+            Harness the predictive power of AI to outpace the competition. We don't just build sites; we build high-performance robotic growth systems.
+          </p>
+          
+          <div className="flex flex-wrap gap-8">
+            <MagneticButton>
+              <button className="px-12 py-6 bg-blue-600 text-white rounded-3xl font-black shadow-3xl shadow-blue-600/50 hover:bg-blue-700 transition-all flex items-center gap-4 text-xl overflow-hidden group">
+                Accelerate Now <ArrowRight size={24} className="group-hover:translate-x-3 transition-transform" />
+              </button>
+            </MagneticButton>
+            <MagneticButton>
+              <button className="px-12 py-6 glass-card text-slate-900 rounded-3xl font-black hover:bg-white transition-all text-xl border-2 border-slate-200">
+                Live Demo
+              </button>
+            </MagneticButton>
+          </div>
+        </motion.div>
+
+        <motion.div 
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 1, delay: 0.5 }}
+          className="relative h-[700px] flex items-center justify-center"
+        >
+          <HelloBot />
+
+          <motion.div drag dragConstraints={{ top: -200, left: -200, right: 200, bottom: 200 }} className="absolute top-10 right-0 glass-card p-8 rounded-[3rem] flex items-center gap-6 cursor-move z-40 border-2 border-blue-200 hover:border-blue-500 shadow-2xl">
+             <div className="w-16 h-16 bg-blue-600 rounded-2xl flex items-center justify-center text-white shadow-xl"><TrendingUp size={32}/></div>
+             <div>
+                <p className="text-sm font-black text-slate-400 uppercase tracking-widest">Efficiency</p>
+                <p className="text-4xl font-black text-slate-900">+450%</p>
+             </div>
+          </motion.div>
+
+          <motion.div drag dragConstraints={{ top: -200, left: -200, right: 200, bottom: 200 }} className="absolute bottom-10 left-0 glass-card p-8 rounded-[3rem] flex items-center gap-6 cursor-move z-40 border-2 border-indigo-200 hover:border-indigo-500 shadow-2xl">
+             <div className="w-16 h-16 bg-indigo-600 rounded-2xl flex items-center justify-center text-white shadow-xl"><Cpu size={32}/></div>
+             <div>
+                <p className="text-sm font-black text-slate-400 uppercase tracking-widest">Processing</p>
+                <p className="text-4xl font-black text-slate-900">Quantum</p>
+             </div>
+          </motion.div>
+        </motion.div>
+      </div>
+    </section>
+  );
+};
+
+const ServiceCard = ({ icon: Icon, title, desc, delay }) => {
+  const cardRef = useRef(null);
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
+  const rotateX = useSpring(useTransform(y, [-100, 100], [15, -15]));
+  const rotateY = useSpring(useTransform(x, [-100, 100], [-15, 15]));
+
+  const onMouseMove = (e) => {
+    const rect = cardRef.current.getBoundingClientRect();
+    x.set(e.clientX - (rect.left + rect.width / 2));
+    y.set(e.clientY - (rect.top + rect.height / 2));
+  };
+
+  return (
+    <motion.div
+      ref={cardRef}
+      onMouseMove={onMouseMove}
+      onMouseLeave={() => { x.set(0); y.set(0); }}
+      style={{ rotateX, rotateY, perspective: 1000 }}
+      initial={{ opacity: 0, y: 80 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.8, delay }}
+      className="glass-card p-14 rounded-[5rem] group border-2 border-transparent hover:border-blue-500 cursor-pointer"
+    >
+      <div className="w-24 h-24 bg-blue-600 rounded-[2rem] flex items-center justify-center text-white mb-12 shadow-3xl shadow-blue-600/40 group-hover:scale-125 group-hover:rotate-12 transition-all duration-700">
+        <Icon size={48} />
+      </div>
+      <h3 className="text-5xl font-black mb-8 text-slate-900 group-hover:text-blue-600 transition-colors tracking-tighter">{title}</h3>
+      <p className="text-slate-500 leading-relaxed font-bold text-xl mb-12">{desc}</p>
+      <div className="flex items-center gap-4 text-blue-600 font-black text-2xl group-hover:translate-x-6 transition-all">
+         Deploy System <ArrowRight size={28} />
+      </div>
+    </motion.div>
+  );
+};
+
+const InteractiveShowcase = () => {
+  const images = [
+    { title: "NeuroCore", tag: "AI LOGIC", url: "https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&q=80&w=800" },
+    { title: "Void UI", tag: "WEB 4.0", url: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&q=80&w=800" },
+    { title: "Apex City", tag: "ARCH VIZ", url: "https://images.unsplash.com/photo-1614850523296-d8c1af93d400?auto=format&fit=crop&q=80&w=800" },
+    { title: "Titan Gear", tag: "ROBOTICS", url: "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&q=80&w=800" },
+  ];
+
+  return (
+    <section className="py-52 bg-slate-950 overflow-hidden relative">
+      <div className="absolute inset-0 bg-blue-900/10 pointer-events-none"></div>
+      <div className="max-w-7xl mx-auto px-6 mb-40 text-center relative z-10">
+         <motion.h2 
+           initial={{ opacity: 0, y: 50 }}
+           whileInView={{ opacity: 1, y: 0 }}
+           className="text-8xl font-black text-white mb-10 tracking-tighter"
+         >
+           Future <span className="text-blue-500">Manifested.</span>
+         </motion.h2>
+         <p className="text-slate-400 text-3xl font-bold max-w-3xl mx-auto leading-relaxed">Explore the projects that are redefining the boundaries of digital possibility through quantum-grade design.</p>
+      </div>
+      
+      <div className="flex gap-16 animate-scroll px-10">
+        {[...images, ...images].map((img, i) => (
+          <motion.div 
+            key={i}
+            whileHover={{ scale: 1.05, y: -30, rotate: 2 }}
+            className="w-[700px] h-[550px] flex-shrink-0 relative rounded-[5rem] overflow-hidden group shadow-[0_40px_100px_-20px_rgba(37,99,235,0.4)]"
+          >
+            <img src={img.url} className="absolute inset-0 w-full h-full object-cover group-hover:scale-125 transition-transform duration-[3s]" alt={img.title} />
+            <div className="absolute inset-0 bg-gradient-to-t from-blue-950/95 via-blue-900/20 to-transparent"></div>
+            <div className="absolute inset-0 p-20 flex flex-col justify-end">
+               <span className="text-blue-400 font-black tracking-[0.5em] text-lg mb-6 uppercase">{img.tag}</span>
+               <h3 className="text-7xl font-black text-white mb-10 translate-y-6 group-hover:translate-y-0 transition-transform duration-700">{img.title}</h3>
+               <button className="bg-white text-slate-950 w-fit px-14 py-5 rounded-3xl font-black text-xl opacity-0 group-hover:opacity-100 transition-all delay-100 translate-y-10 group-hover:translate-y-0">Launch Simulation</button>
+            </div>
+            <div className="shine-effect"></div>
+          </motion.div>
+        ))}
+      </div>
+    </section>
+  );
+};
+
+const EcosystemSection = () => {
+   return (
+      <section className="py-52 relative">
+         <div className="cyber-grid"></div>
+         <div className="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-40 items-center">
+            <div className="relative">
+               <motion.div 
+                 animate={{ rotate: -360 }}
+                 transition={{ repeat: Infinity, duration: 25, ease: "linear" }}
+                 className="absolute -inset-16 border-4 border-dashed border-blue-200 rounded-full"
+               ></motion.div>
+               
+               <div className="grid grid-cols-2 gap-10 relative z-10">
+                  {[
+                    { icon: ShieldCheck, label: "Vault", color: "blue" },
+                    { icon: Rocket, label: "Boost", color: "orange" },
+                    { icon: Zap, label: "Core", color: "cyan" },
+                    { icon: Fingerprint, label: "Auth", color: "purple" }
+                  ].map((item, i) => (
+                    <motion.div
+                      key={i}
+                      whileHover={{ scale: 1.15, rotate: i % 2 === 0 ? 8 : -8 }}
+                      className="glass-card p-14 rounded-[5rem] flex flex-col items-center gap-8 border-2 border-white/50"
+                    >
+                       <div className={`w-28 h-28 rounded-[2.5rem] bg-${item.color}-600 flex items-center justify-center text-white shadow-2xl`}>
+                          <item.icon size={56} />
+                       </div>
+                       <span className="text-3xl font-black text-slate-900 tracking-tighter">{item.label}</span>
+                    </motion.div>
+                  ))}
+               </div>
+            </div>
+
+            <div>
+               <h2 className="text-8xl font-black text-slate-900 mb-12 leading-tight tracking-tighter">
+                  Autonomous <br/> <span className="text-blue-600">Growth Engine.</span>
+               </h2>
+               <p className="text-3xl text-slate-500 font-bold mb-16 leading-relaxed">
+                  We integrate advanced robotic algorithms into your sales funnel, creating a self-sustaining ecosystem that optimizes performance in real-time.
+               </p>
+               <div className="space-y-10 mb-20">
+                  {["Neural-Link Automation", "Synthetic Brand Voices", "Quantum Analytics Dashboard"].map((t, i) => (
+                    <motion.div 
+                      key={i} 
+                      whileHover={{ x: 30, backgroundColor: "rgba(255,255,255,1)" }}
+                      className="flex items-center gap-8 p-8 rounded-[3rem] transition-all cursor-default border-2 border-transparent hover:border-blue-100"
+                    >
+                       <div className="w-14 h-14 bg-blue-100 rounded-2xl flex items-center justify-center text-blue-600"><Zap size={32}/></div>
+                       <span className="text-3xl font-black text-slate-800 tracking-tight">{t}</span>
+                    </motion.div>
+                  ))}
+               </div>
+               <MagneticButton>
+                  <button className="text-3xl font-black text-blue-600 flex items-center gap-6 group">
+                    View Technical Roadmap <ArrowRight size={32} className="group-hover:translate-x-6 transition-transform" />
+                  </button>
+               </MagneticButton>
+            </div>
+         </div>
+      </section>
+   )
+}
+
+const Footer = () => (
+  <footer className="bg-slate-950 py-40 rounded-t-[7rem] overflow-hidden relative">
+     <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-blue-700 via-cyan-400 to-blue-700"></div>
+     <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-3 gap-32 items-center mb-40">
+        <div className="flex flex-col gap-12">
+           <div className="flex items-center gap-6">
+              <div className="w-20 h-20 bg-blue-600 rounded-[2rem] flex items-center justify-center text-white shadow-3xl shadow-blue-500/30"><Bot size={44}/></div>
+              <span className="text-5xl font-black text-white tracking-tighter">DataBuddy</span>
+           </div>
+           <p className="text-slate-400 text-2xl font-bold leading-relaxed">Forging the future of human-AI collaboration for global enterprise through robotic precision.</p>
+        </div>
+        <div className="flex flex-col gap-10">
+           <h4 className="text-blue-500 font-black tracking-[0.3em] uppercase text-lg">Navigation</h4>
+           <div className="grid grid-cols-2 gap-8 text-white text-2xl font-black">
+              <a href="#" className="hover:text-blue-400 transition-colors">Lab</a>
+              <a href="#" className="hover:text-blue-400 transition-colors">Manifesto</a>
+              <a href="#" className="hover:text-blue-400 transition-colors">Systems</a>
+              <a href="#" className="hover:text-blue-400 transition-colors">Network</a>
+           </div>
+        </div>
+        <div className="flex flex-col gap-10">
+           <h4 className="text-blue-500 font-black tracking-[0.3em] uppercase text-lg">Sync Status</h4>
+           <div className="p-10 rounded-[4rem] bg-white/5 border border-white/10 flex items-center gap-8">
+              <div className="w-6 h-6 rounded-full bg-green-500 animate-pulse shadow-[0_0_20px_rgba(34,197,94,0.8)]"></div>
+              <span className="text-white font-black text-2xl uppercase tracking-tighter">Systems Operational</span>
+           </div>
+        </div>
+     </div>
+     <div className="max-w-7xl mx-auto px-6 pt-20 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-12">
+        <p className="text-slate-600 font-black text-lg">© 2026 DATABUDDY GLOBAL PROTOCOL. ALL RIGHTS RESERVED.</p>
+        <div className="flex gap-12">
+           {['In', 'Tw', 'Ig'].map(s => <a key={s} href="#" className="w-16 h-16 rounded-[1.5rem] border border-white/10 flex items-center justify-center text-white hover:bg-blue-600 hover:border-blue-600 transition-all font-black text-2xl">{s}</a>)}
+        </div>
+     </div>
+  </footer>
+);
+
+export default function App() {
+  return (
+    <>
+      <style>{customStyles}</style>
+      <div className="fluid-bg"></div>
+      <div className="cyber-grid"></div>
+      <div className="min-h-screen selection:bg-blue-600 selection:text-white">
+        <Navbar />
+        <HeroSection />
+        
+        <section id="services" className="py-52">
+          <div className="max-w-7xl mx-auto px-6">
+             <div className="flex flex-col md:flex-row justify-between items-end gap-16 mb-40">
+                <div className="max-w-3xl">
+                   <h2 className="text-8xl font-black text-slate-900 mb-10 tracking-tighter">High-Yield <span className="text-blue-600">Solutions.</span></h2>
+                   <p className="text-3xl text-slate-500 font-bold leading-relaxed">We deploy bespoke digital armaments designed to capture market share and dominate global landscapes at infinite scale.</p>
+                </div>
+                <div className="flex gap-6">
+                   <div className="w-20 h-20 rounded-[2.5rem] glass-card flex items-center justify-center text-blue-600 hover:bg-white transition-all"><ArrowRight size={32} className="rotate-180" /></div>
+                   <div className="w-20 h-20 rounded-[2.5rem] bg-blue-600 flex items-center justify-center text-white shadow-2xl shadow-blue-500/40 hover:scale-110 transition-all"><ArrowRight size={32} /></div>
+                </div>
+             </div>
+             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-16">
+               <ServiceCard icon={MonitorPlay} title="AI Motion" desc="Hyper-realistic animations and synthetic video generation for viral market penetration." delay={0.1} />
+               <ServiceCard icon={Zap} title="Automation" desc="Fully autonomous business processes that eliminate all manual structural bottlenecks." delay={0.2} />
+               <ServiceCard icon={Code2} title="Titan Web" desc="Architecting high-frequency websites with proprietary atomic design principles." delay={0.3} />
+               <ServiceCard icon={TrendingUp} title="SEO Core" desc="Algorithmic dominance through deep-learning neural search optimization patterns." delay={0.4} />
+               <ServiceCard icon={Megaphone} title="Sync Ads" desc="Multi-channel advertising campaigns synced via real-time predictive AI." delay={0.5} />
+               <ServiceCard icon={Palette} title="Identity" desc="Brand systems that resonate with the collective digital consciousness." delay={0.6} />
+             </div>
+          </div>
+        </section>
+
+        <InteractiveShowcase />
+        <EcosystemSection />
+        
+        <section id="contact" className="py-60 px-6">
+           <div className="max-w-7xl mx-auto glass-card rounded-[8rem] p-20 md:p-40 text-center relative overflow-hidden border-4 border-blue-50 shadow-3xl">
+              <div className="absolute inset-0 opacity-10 cyber-grid"></div>
+              <motion.div initial={{ opacity: 0, scale: 0.9 }} whileInView={{ opacity: 1, scale: 1 }} transition={{ duration: 0.8 }}>
+                 <h2 className="text-8xl md:text-[10rem] font-black text-slate-900 mb-16 tracking-tighter leading-[0.8]">
+                   Begin Your <br/> <span className="text-blue-600">Ascension.</span>
+                 </h2>
+                 <p className="text-3xl text-slate-500 font-bold mb-24 max-w-3xl mx-auto leading-relaxed">
+                   Connection established. Our engineers are ready to upgrade your business infrastructure to the next generation of intelligence.
+                 </p>
+                 <div className="flex flex-wrap justify-center gap-12">
+                    <MagneticButton>
+                       <button className="px-20 py-10 bg-blue-600 text-white rounded-[3.5rem] font-black text-4xl shadow-3xl shadow-blue-600/50 hover:bg-blue-700 transition-all">
+                          Initiate Sync
+                       </button>
+                    </MagneticButton>
+                    <MagneticButton>
+                       <button className="px-20 py-10 glass-card text-slate-900 rounded-[3.5rem] font-black text-4xl hover:bg-slate-50 transition-all border-4 border-slate-100">
+                          Direct Feed
+                       </button>
+                    </MagneticButton>
+                 </div>
+              </motion.div>
+           </div>
+        </section>
+
+        <Footer />
+      </div>
+    </>
+  );
+}
