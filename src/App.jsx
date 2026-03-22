@@ -504,25 +504,10 @@ const HeroSection = () => {
               </div>
               <div>
                 <p className="text-[9px] sm:text-xs font-black text-slate-400 uppercase tracking-widest">Boost Your Business</p>
-                <p className="text-xl sm:text-2xl lg:text-4xl font-black text-slate-900">+200%</p>
-              </div>
-            </motion.div>
-
-            <motion.div
-              drag
-              dragConstraints={{ top: -100, left: -100, right: 100, bottom: 100 }}
-              className="absolute bottom-2 left-2 sm:bottom-4 sm:left-4 md:bottom-6 md:left-0 glass-card p-3 sm:p-5 lg:p-8 rounded-2xl lg:rounded-[3rem] flex items-center gap-3 lg:gap-6 cursor-move z-40 border-2 border-indigo-200 hover:border-indigo-500 shadow-2xl"
-            >
-              <div className="w-9 h-9 sm:w-12 sm:h-12 lg:w-16 lg:h-16 bg-indigo-600 rounded-lg sm:rounded-xl lg:rounded-2xl flex items-center justify-center text-white shadow-xl shrink-0">
-                <Cpu size={18} className="sm:hidden" />
-                <Cpu size={22} className="hidden sm:block lg:hidden" />
-                <Cpu size={28} className="hidden lg:block" />
-              </div>
-              <div>
-                <p className="text-[9px] sm:text-xs font-black text-slate-400 uppercase tracking-widest">Build Smarter Business</p>
                 <p className="text-xl sm:text-2xl lg:text-4xl font-black text-slate-900">With AI</p>
               </div>
             </motion.div>
+
           </div>
         </motion.div>
 
