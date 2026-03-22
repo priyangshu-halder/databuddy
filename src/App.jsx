@@ -286,7 +286,11 @@ const HelloBot = () => {
             initial={{ rotate: -120, opacity: 0, x: 90 }}
             animate={{ rotate: [0, -40, 0, -40, 0], opacity: 1, x: 70 }}
             exit={{ opacity: 0, x: 120 }}
-            transition={{ duration: 3, times: [0, 0.2, 0.4, 0.6, 1] }}
+            transition={{
+              rotate: { duration: 3, times: [0, 0.2, 0.4, 0.6, 1] },
+              opacity: { duration: 0.3 },
+              x: { duration: 0.3 },
+            }}
             className="absolute -right-10 sm:-right-15 top-1/2 z-30"
           >
             <div className="relative">
@@ -369,7 +373,7 @@ const Navbar = () => {
         </div>
 
         <div className="hidden md:flex items-center gap-10 font-bold text-slate-500">
-          {['Home', 'About', 'Services'].map((item) => (
+          {['Home', 'About', 'Global Presence', 'Services'].map((item) => (
             <a key={item} href={`#${item.toLowerCase()}`} className="relative hover:text-blue-600 transition-colors group">
               {item}
               <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-600 group-hover:w-full transition-all duration-300"></span>
@@ -377,7 +381,7 @@ const Navbar = () => {
           ))}
           <MagneticButton className="cursor-pointer">
             <button className="bg-blue-600 text-white px-8 py-3 rounded-2xl font-black hover:bg-blue-700 transition-all shadow-xl shadow-blue-500/40">
-              Start Growing
+              Contact Us
             </button>
           </MagneticButton>
         </div>
@@ -456,15 +460,21 @@ const HeroSection = () => {
           
           <div className="flex flex-wrap gap-4 sm:gap-8">
             <MagneticButton>
-              <button className="px-7 sm:px-12 py-4 sm:py-6 bg-blue-600 text-white rounded-2xl sm:rounded-3xl font-black shadow-2xl shadow-blue-600/50 hover:bg-blue-700 transition-all flex items-center gap-3 sm:gap-4 text-base sm:text-xl overflow-hidden group">
-                Accelerate Now <ArrowRight size={20} className="group-hover:translate-x-2 sm:group-hover:translate-x-3 transition-transform" />
-              </button>
+              <a href="#services">
+                <button className="px-7 sm:px-12 py-4 sm:py-6 bg-blue-600 text-white rounded-2xl sm:rounded-3xl font-black shadow-2xl shadow-blue-600/50 hover:bg-blue-700 transition-all flex items-center gap-3 sm:gap-4 text-base sm:text-xl group">
+                  Explore Services 
+                  <ArrowRight size={20} className="group-hover:translate-x-2 transition-transform" />
+                </button>
+              </a>
             </MagneticButton>
-            <MagneticButton>
-              <button className="px-7 sm:px-12 py-4 sm:py-6 glass-card text-slate-900 rounded-2xl sm:rounded-3xl font-black hover:bg-white transition-all text-base sm:text-xl border-2 border-slate-200">
-                Live Demo
-              </button>
-            </MagneticButton>
+          
+            {/* <MagneticButton>
+              <a href="#about">
+                <button className="px-7 sm:px-12 py-4 sm:py-6 glass-card text-slate-900 rounded-2xl sm:rounded-3xl font-black hover:bg-white transition-all text-base sm:text-xl border-2 border-slate-200">
+                  Learn More
+                </button>
+              </a>
+            </MagneticButton>*/}
           </div>
         </motion.div>
 
@@ -487,14 +497,14 @@ const HeroSection = () => {
               dragConstraints={{ top: -100, left: -100, right: 100, bottom: 100 }}
               className="absolute top-2 right-2 sm:top-4 sm:right-4 md:top-6 md:right-0 glass-card p-3 sm:p-5 lg:p-8 rounded-2xl lg:rounded-[3rem] flex items-center gap-3 lg:gap-6 cursor-move z-40 border-2 border-blue-200 hover:border-blue-500 shadow-2xl"
             >
-              <div className="w-9 h-9 sm:w-12 sm:h-12 lg:w-16 lg:h-16 bg-blue-600 rounded-lg sm:rounded-xl lg:rounded-2xl flex items-center justify-center text-white shadow-xl flex-shrink-0">
+              <div className="w-9 h-9 sm:w-12 sm:h-12 lg:w-16 lg:h-16 bg-blue-600 rounded-lg sm:rounded-xl lg:rounded-2xl flex items-center justify-center text-white shadow-xl shrink-0">
                 <TrendingUp size={18} className="sm:hidden" />
                 <TrendingUp size={22} className="hidden sm:block lg:hidden" />
                 <TrendingUp size={28} className="hidden lg:block" />
               </div>
               <div>
-                <p className="text-[9px] sm:text-xs font-black text-slate-400 uppercase tracking-widest">Efficiency</p>
-                <p className="text-xl sm:text-2xl lg:text-4xl font-black text-slate-900">+450%</p>
+                <p className="text-[9px] sm:text-xs font-black text-slate-400 uppercase tracking-widest">Boost Your Business</p>
+                <p className="text-xl sm:text-2xl lg:text-4xl font-black text-slate-900">+200%</p>
               </div>
             </motion.div>
 
@@ -509,8 +519,8 @@ const HeroSection = () => {
                 <Cpu size={28} className="hidden lg:block" />
               </div>
               <div>
-                <p className="text-[9px] sm:text-xs font-black text-slate-400 uppercase tracking-widest">Processing</p>
-                <p className="text-xl sm:text-2xl lg:text-4xl font-black text-slate-900">Quantum</p>
+                <p className="text-[9px] sm:text-xs font-black text-slate-400 uppercase tracking-widest">Build Smarter Business</p>
+                <p className="text-xl sm:text-2xl lg:text-4xl font-black text-slate-900">With AI</p>
               </div>
             </motion.div>
           </div>
@@ -550,58 +560,9 @@ const ServiceCard = ({ icon: Icon, title, desc, delay }) => {
         <Icon size={40} className="hidden sm:block md:hidden" />
         <Icon size={48} className="hidden md:block" />
       </div>
-      <h3 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black mb-4 sm:mb-6 md:mb-8 text-slate-900 group-hover:text-blue-600 transition-colors tracking-tighter">{title}</h3>
+      <h3 className="text-2xl sm:text-3xl md:text-3xl lg:text-4xl font-black mb-4 sm:mb-6 md:mb-8 text-slate-900 group-hover:text-blue-600 transition-colors tracking-tighter">{title}</h3>
       <p className="text-slate-500 leading-relaxed font-bold text-base sm:text-lg md:text-xl mb-6 sm:mb-10 md:mb-12">{desc}</p>
-      <div className="flex items-center gap-3 sm:gap-4 text-blue-600 font-black text-lg sm:text-xl md:text-2xl group-hover:translate-x-4 sm:group-hover:translate-x-6 transition-all">
-         Deploy System <ArrowRight size={22} />
-      </div>
     </motion.div>
-  );
-};
-
-const InteractiveShowcase = () => {
-  const images = [
-    { title: "NeuroCore", tag: "AI LOGIC", url: "https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&q=80&w=800" },
-    { title: "Void UI", tag: "WEB 4.0", url: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&q=80&w=800" },
-    { title: "Apex City", tag: "ARCH VIZ", url: "https://images.unsplash.com/photo-1614850523296-d8c1af93d400?auto=format&fit=crop&q=80&w=800" },
-    { title: "Titan Gear", tag: "ROBOTICS", url: "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&q=80&w=800" },
-  ];
-
-  return (
-    <section className="py-24 sm:py-36 md:py-52 bg-slate-950 overflow-hidden relative">
-      <div className="absolute inset-0 bg-blue-900/10 pointer-events-none"></div>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 mb-16 sm:mb-28 md:mb-40 text-center relative z-10">
-         <motion.h2 
-           initial={{ opacity: 0, y: 50 }}
-           whileInView={{ opacity: 1, y: 0 }}
-           className="text-4xl sm:text-6xl md:text-8xl font-black text-white mb-6 sm:mb-10 tracking-tighter"
-         >
-           Future <span className="text-blue-500">Manifested.</span>
-         </motion.h2>
-         <p className="text-slate-400 text-lg sm:text-2xl md:text-3xl font-bold max-w-3xl mx-auto leading-relaxed">
-           Explore the projects that are redefining the boundaries of digital possibility through quantum-grade design.
-         </p>
-      </div>
-      
-      <div className="flex gap-6 sm:gap-10 md:gap-16 animate-scroll px-4 sm:px-10">
-        {[...images, ...images].map((img, i) => (
-          <motion.div 
-            key={i}
-            whileHover={{ scale: 1.05, y: -20, rotate: 2 }}
-            className="w-64 h-48 sm:w-96 sm:h-64 md:w-176 md:h-136 shrink-0 relative rounded-4xl sm:rounded-[3rem] md:rounded-[5rem] overflow-hidden group shadow-[0_20px_60px_-10px_rgba(37,99,235,0.4)]"
-          >
-            <img src={img.url} className="absolute inset-0 w-full h-full object-cover group-hover:scale-125 transition-transform duration-[3s]" alt={img.title} />
-            <div className="absolute inset-0 bg-linear-to-t from-blue-950/95 via-blue-900/20 to-transparent"></div>
-            <div className="absolute inset-0 p-6 sm:p-10 md:p-20 flex flex-col justify-end">
-               <span className="text-blue-400 font-black tracking-[0.3em] sm:tracking-[0.5em] text-xs sm:text-sm md:text-lg mb-2 sm:mb-4 md:mb-6 uppercase">{img.tag}</span>
-               <h3 className="text-2xl sm:text-4xl md:text-7xl font-black text-white mb-4 sm:mb-6 md:mb-10 translate-y-2 group-hover:translate-y-0 transition-transform duration-700">{img.title}</h3>
-               <button className="bg-white text-slate-950 w-fit px-6 sm:px-10 md:px-14 py-2.5 sm:py-3.5 md:py-5 rounded-2xl md:rounded-3xl font-black text-sm sm:text-base md:text-xl opacity-0 group-hover:opacity-100 transition-all delay-100 translate-y-4 group-hover:translate-y-0">Launch Simulation</button>
-            </div>
-            <div className="shine-effect"></div>
-          </motion.div>
-        ))}
-      </div>
-    </section>
   );
 };
 
@@ -616,7 +577,10 @@ const EcosystemSection = () => {
    return (
       <section className="py-24 sm:py-36 md:py-52 relative">
          <div className="cyber-grid-inline absolute inset-0 pointer-events-none"></div>
+
          <div className="max-w-7xl mx-auto px-4 sm:px-6 grid lg:grid-cols-2 gap-16 sm:gap-24 lg:gap-40 items-center">
+            
+            {/* LEFT VISUAL BLOCK */}
             <div className="relative py-8 sm:py-16">
                <motion.div 
                  animate={{ rotate: -360 }}
@@ -626,10 +590,10 @@ const EcosystemSection = () => {
                
                <div className="grid grid-cols-2 gap-5 sm:gap-8 md:gap-10 relative z-10">
                   {[
-                    { icon: ShieldCheck, label: "Vault", color: "blue" },
-                    { icon: Rocket, label: "Boost", color: "orange" },
-                    { icon: Zap, label: "Core", color: "cyan" },
-                    { icon: Fingerprint, label: "Auth", color: "purple" }
+                    { icon: MonitorPlay, label: "AI Content", color: "blue" },
+                    { icon: Zap, label: "Automation", color: "orange" },
+                    { icon: Code2, label: "Web Dev", color: "cyan" },
+                    { icon: TrendingUp, label: "Growth", color: "purple" }
                   ].map((item, i) => (
                     <motion.div
                       key={i}
@@ -641,85 +605,128 @@ const EcosystemSection = () => {
                           <item.icon size={38} className="hidden sm:block md:hidden" />
                           <item.icon size={56} className="hidden md:block" />
                        </div>
-                       <span className="text-lg sm:text-2xl md:text-3xl font-black text-slate-900 tracking-tighter">{item.label}</span>
+                       <span className="text-lg sm:text-2xl md:text-3xl font-black text-slate-900 tracking-tighter">
+                          {item.label}
+                       </span>
                     </motion.div>
                   ))}
                </div>
             </div>
 
+            {/* RIGHT CONTENT BLOCK */}
             <div>
                <h2 className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-black text-slate-900 mb-6 sm:mb-10 md:mb-12 leading-tight tracking-tighter">
-                  Autonomous <br/> <span className="text-blue-600">Growth Engine.</span>
+                  Transforming <br/> <span className="text-blue-600">Digital Growth.</span>
                </h2>
+
                <p className="text-base sm:text-2xl md:text-3xl text-slate-500 font-bold mb-8 sm:mb-14 md:mb-16 leading-relaxed">
-                  We integrate advanced robotic algorithms into your sales funnel, creating a self-sustaining ecosystem that optimizes performance in real-time.
+                  DataBuddy helps businesses grow through AI-powered solutions, creative storytelling, 
+                  and data-driven marketing strategies that improve visibility, efficiency, and real results.
                </p>
+
                <div className="space-y-4 sm:space-y-8 md:space-y-10 mb-10 sm:mb-16 md:mb-20">
-                  {["Neural-Link Automation", "Synthetic Brand Voices", "Quantum Analytics Dashboard"].map((t, i) => (
+                  {[
+                    "AI Animation & Video Content",
+                    "Business Automation & AI Workflows",
+                    "Website Development & UI Design"
+                  ].map((t, i) => (
                     <motion.div 
                       key={i} 
                       whileHover={{ x: 20, backgroundColor: "rgba(255,255,255,1)" }}
                       className="flex items-center gap-4 sm:gap-8 p-5 sm:p-8 rounded-4xl sm:rounded-[3rem] transition-all cursor-default border-2 border-transparent hover:border-blue-100"
                     >
-                       <div className="w-10 h-10 sm:w-14 sm:h-14 bg-blue-100 rounded-xl sm:rounded-2xl flex items-center justify-center text-blue-600 flex-shrink-0"><Zap size={22}/></div>
-                       <span className="text-lg sm:text-2xl md:text-3xl font-black text-slate-800 tracking-tight">{t}</span>
+                       <div className="w-10 h-10 sm:w-14 sm:h-14 bg-blue-100 rounded-xl sm:rounded-2xl flex items-center justify-center text-blue-600 shrink-0">
+                          <Zap size={22}/>
+                       </div>
+                       <span className="text-lg sm:text-2xl md:text-3xl font-black text-slate-800 tracking-tight">
+                          {t}
+                       </span>
                     </motion.div>
                   ))}
                </div>
-               <MagneticButton>
-                  <button className="text-xl sm:text-2xl md:text-3xl font-black text-blue-600 flex items-center gap-4 group">
-                    View Technical Roadmap <ArrowRight size={24} className="group-hover:translate-x-4 sm:group-hover:translate-x-6 transition-transform" />
-                  </button>
-               </MagneticButton>
             </div>
          </div>
       </section>
    )
 }
 
-const Footer = () => (
-  <footer className="bg-slate-950 py-20 sm:py-28 md:py-40 rounded-t-[3rem] sm:rounded-t-[5rem] md:rounded-t-[7rem] overflow-hidden relative">
-     <div className="absolute top-0 left-0 w-full h-2 bg-linear-to-r from-blue-700 via-cyan-400 to-blue-700"></div>
-     <div className="max-w-7xl mx-auto px-4 sm:px-6 grid sm:grid-cols-2 md:grid-cols-3 gap-12 sm:gap-16 md:gap-32 items-center mb-16 sm:gap-y-12 sm:mb-24 md:mb-40">
-        <div className="flex flex-col gap-6 sm:gap-10 md:gap-12">
-           <div className="flex items-center gap-4 sm:gap-6">
-              <div className="w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20 bg-blue-600 rounded-2xl md:rounded-4xl flex items-center justify-center text-white shadow-2xl shadow-blue-500/30">
-                <img src="/databuddyLogo.png" alt="DataBuddy Logo" className="w-full h-full object-contain"/>
-              </div>
-              <span className="text-3xl sm:text-4xl md:text-5xl font-black text-white tracking-tighter">DataBuddy</span>
-           </div>
-           <p className="text-slate-400 text-base sm:text-xl md:text-2xl font-bold leading-relaxed">Forging the future of human-AI collaboration for global enterprise through robotic precision.</p>
-        </div>
 
-        <div className="flex flex-col gap-6 sm:gap-8 md:gap-10">
-           <h4 className="text-blue-500 font-black tracking-[0.3em] uppercase text-sm md:text-lg">Navigation</h4>
-           <div className="grid grid-cols-2 gap-4 sm:gap-6 md:gap-8 text-white text-lg sm:text-xl md:text-2xl font-black">
-              <a href="#" className="hover:text-blue-400 transition-colors">Lab</a>
-              <a href="#" className="hover:text-blue-400 transition-colors">Manifesto</a>
-              <a href="#" className="hover:text-blue-400 transition-colors">Systems</a>
-              <a href="#" className="hover:text-blue-400 transition-colors">Network</a>
-           </div>
-        </div>
+const FloatingOrbs = () => {
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
 
-        <div className="flex flex-col gap-6 sm:gap-8 md:gap-10 sm:col-span-2 md:col-span-1">
-           <h4 className="text-blue-500 font-black tracking-[0.3em] uppercase text-sm md:text-lg">Sync Status</h4>
-           <div className="p-6 sm:p-8 md:p-10 rounded-[2.5rem] md:rounded-[4rem] bg-white/5 border border-white/10 flex items-center gap-5 sm:gap-8">
-              <div className="w-4 h-4 sm:w-6 sm:h-6 rounded-full bg-green-500 animate-pulse shadow-[0_0_20px_rgba(34,197,94,0.8)] flex-shrink-0"></div>
-              <span className="text-white font-black text-base sm:text-xl md:text-2xl uppercase tracking-tighter">Systems Operational</span>
-           </div>
-        </div>
-     </div>
+  const rotateX = useSpring(useTransform(y, [-100, 100], [10, -10]), { stiffness: 80, damping: 20 });
+  const rotateY = useSpring(useTransform(x, [-100, 100], [-10, 10]), { stiffness: 80, damping: 20 });
 
-     <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-8 sm:pt-12 md:pt-20 border-t border-white/10 flex flex-col sm:flex-row justify-between items-center gap-6 sm:gap-8 md:gap-12">
-        <p className="text-slate-600 font-black text-xs sm:text-sm md:text-lg text-center sm:text-left">© 2026 DATABUDDY GLOBAL PROTOCOL. ALL RIGHTS RESERVED.</p>
-        <div className="flex gap-4 sm:gap-8 md:gap-12">
-           {['In', 'Tw', 'Ig'].map(s => (
-             <a key={s} href="#" className="w-10 h-10 sm:w-12 sm:h-12 md:w-16 md:h-16 rounded-2xl md:rounded-3xl border border-white/10 flex items-center justify-center text-white hover:bg-blue-600 hover:border-blue-600 transition-all font-black text-base sm:text-lg md:text-2xl">{s}</a>
-           ))}
-        </div>
-     </div>
-  </footer>
-);
+  // Orb shifts slightly toward cursor
+  const orbX = useSpring(useTransform(x, [-100, 100], [-12, 12]), { stiffness: 60, damping: 18 });
+  const orbY = useSpring(useTransform(y, [-100, 100], [-12, 12]), { stiffness: 60, damping: 18 });
+
+  // Inner glow moves opposite for depth
+  const glowX = useSpring(useTransform(x, [-100, 100], [8, -8]), { stiffness: 50, damping: 15 });
+  const glowY = useSpring(useTransform(y, [-100, 100], [8, -8]), { stiffness: 50, damping: 15 });
+
+  // Ring tilts more aggressively
+  const ringRotateX = useSpring(useTransform(y, [-100, 100], [20, -20]), { stiffness: 70, damping: 20 });
+  const ringRotateY = useSpring(useTransform(x, [-100, 100], [-20, 20]), { stiffness: 70, damping: 20 });
+
+  // Orbit speed reacts to cursor distance
+  const orbitX = useSpring(useTransform(x, [-100, 100], [-6, 6]), { stiffness: 40, damping: 12 });
+  const orbitY = useSpring(useTransform(y, [-100, 100], [-6, 6]), { stiffness: 40, damping: 12 });
+
+  // Glow intensity scale reacts to cursor distance
+  const glowScale = useSpring(useTransform(x, [-100, 100], [0.95, 1.1]), { stiffness: 60, damping: 15 });
+
+  const handleMouseMove = (e) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const offsetX = e.clientX - (rect.left + rect.width / 2);
+    const offsetY = e.clientY - (rect.top + rect.height / 2);
+    x.set(offsetX / 5);
+    y.set(offsetY / 5);
+  };
+
+  return (
+    <motion.div
+      onMouseMove={handleMouseMove}
+      onMouseLeave={() => {
+        x.set(0);
+        y.set(0);
+      }}
+      style={{ rotateX, rotateY, perspective: 1000 }}
+      className="relative w-64 h-64 sm:w-80 sm:h-80 md:w-96 md:h-96 flex items-center justify-center"
+    >
+      {/* MAIN ORB — drifts toward cursor */}
+      <motion.div
+        style={{ x: orbX, y: orbY, scale: glowScale }}
+        className="absolute w-52 h-52 md:w-64 md:h-64 rounded-full bg-linear-to-br from-blue-500 to-indigo-600 blur-[2px] shadow-[0_0_80px_rgba(59,130,246,0.6)]"
+      />
+
+      {/* INNER GLOW — moves opposite for parallax depth */}
+      <motion.div
+        style={{ x: glowX, y: glowY }}
+        className="absolute w-32 h-32 md:w-40 md:h-40 rounded-full bg-white/20 blur-xl"
+      />
+
+      {/* ROTATING RING — tilts with cursor */}
+      <motion.div
+        animate={{ rotate: 360 }}
+        transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+        style={{ rotateX: ringRotateX, rotateY: ringRotateY }}
+        className="absolute w-72 h-72 md:w-80 md:h-80 border border-blue-300/40 rounded-full"
+      />
+
+      {/* SMALL ORBIT DOT — slightly offset by cursor */}
+      <motion.div
+        animate={{ rotate: -360 }}
+        transition={{ duration: 12, repeat: Infinity, ease: "linear" }}
+        style={{ x: orbitX, y: orbitY }}
+        className="absolute w-full h-full"
+      >
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-5 h-5 bg-blue-400 rounded-full shadow-[0_0_20px_rgba(59,130,246,0.8)]" />
+      </motion.div>
+    </motion.div>
+  );
+};
 
 export default function App() {
   return (
@@ -730,7 +737,7 @@ export default function App() {
       <div className="min-h-screen selection:bg-blue-600 selection:text-white">
         <Navbar />
         <HeroSection />
-        
+        <EcosystemSection />
         <section id="services" className="py-20 sm:py-36 md:py-52">
           <div className="max-w-7xl mx-auto px-4 sm:px-6">
              <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-8 sm:gap-12 md:gap-16 mb-16 sm:gap-y-12 sm:mb-28 md:mb-40">
@@ -742,52 +749,55 @@ export default function App() {
                      We deploy bespoke digital armaments designed to capture market share and dominate global landscapes at infinite scale.
                    </p>
                 </div>
-                <div className="flex gap-4 sm:gap-6 shrink-0">
-                   <div className="w-14 h-14 sm:w-20 sm:h-20 rounded-3xl sm:rounded-[2.5rem] glass-card flex items-center justify-center text-blue-600 hover:bg-white transition-all"><ArrowRight size={24} className="rotate-180" /></div>
-                   <div className="w-14 h-14 sm:w-20 sm:h-20 rounded-3xl sm:rounded-[2.5rem] bg-blue-600 flex items-center justify-center text-white shadow-2xl shadow-blue-500/40 hover:scale-110 transition-all"><ArrowRight size={24} /></div>
+                <div className="flex justify-center items-center w-full md:w-auto">
+                  <FloatingOrbs />
                 </div>
              </div>
              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-10 md:gap-16">
-               <ServiceCard icon={MonitorPlay} title="AI Motion" desc="Hyper-realistic animations and synthetic video generation for viral market penetration." delay={0.1} />
-               <ServiceCard icon={Zap} title="Automation" desc="Fully autonomous business processes that eliminate all manual structural bottlenecks." delay={0.2} />
-               <ServiceCard icon={Code2} title="Titan Web" desc="Architecting high-frequency websites with proprietary atomic design principles." delay={0.3} />
-               <ServiceCard icon={TrendingUp} title="SEO Core" desc="Algorithmic dominance through deep-learning neural search optimization patterns." delay={0.4} />
-               <ServiceCard icon={Megaphone} title="Sync Ads" desc="Multi-channel advertising campaigns synced via real-time predictive AI." delay={0.5} />
-               <ServiceCard icon={Palette} title="Identity" desc="Brand systems that resonate with the collective digital consciousness." delay={0.6} />
+               <ServiceCard 
+                 icon={MonitorPlay} 
+                 title="AI Animation" 
+                 desc="Create engaging AI-powered animations and visual content that bring your ideas to life." 
+                 delay={0.1} 
+               />
+               
+               <ServiceCard 
+                 icon={Zap} 
+                 title="Automation" 
+                 desc="Simplify repetitive tasks with practical automation solutions that improve efficiency and save time." 
+                 delay={0.2} 
+               />
+               
+               <ServiceCard 
+                 icon={Code2} 
+                 title="Data Analytics" 
+                 desc="Analyze and visualize data to uncover insights that support better business decisions." 
+                 delay={0.3} 
+               />
+               
+               <ServiceCard 
+                 icon={TrendingUp} 
+                 title="SEO" 
+                 desc="Enhance your online presence with proven SEO techniques that drive consistent organic traffic." 
+                 delay={0.4} 
+               />
+               
+               <ServiceCard 
+                 icon={Megaphone} 
+                 title="Advertisement" 
+                 desc="Design clean, impactful visuals and marketing materials that effectively communicate your message." 
+                 delay={0.5} 
+               />
+               
+               <ServiceCard 
+                 icon={Palette} 
+                 title="Creative Design" 
+                 desc="Develop a consistent brand identity with thoughtful design, colors, and messaging." 
+                 delay={0.6} 
+               />
              </div>
           </div>
         </section>
-
-        <InteractiveShowcase />
-        <EcosystemSection />
-        
-        <section id="contact" className="py-20 sm:py-36 md:py-60 px-4 sm:px-6">
-           <div className="max-w-7xl mx-auto glass-card rounded-[3rem] sm:rounded-[5rem] md:rounded-[8rem] p-10 sm:p-16 md:p-28 lg:p-40 text-center relative overflow-hidden border-4 border-blue-50 shadow-2xl">
-              <div className="absolute inset-0 opacity-10 cyber-grid"></div>
-              <motion.div initial={{ opacity: 0, scale: 0.9 }} whileInView={{ opacity: 1, scale: 1 }} transition={{ duration: 0.8 }}>
-                 <h2 className="text-4xl sm:text-6xl md:text-8xl lg:text-[10rem] font-black text-slate-900 mb-8 sm:mb-12 md:mb-16 tracking-tighter leading-[0.85]">
-                   Begin Your <br/> <span className="text-blue-600">Ascension.</span>
-                 </h2>
-                 <p className="text-base sm:text-xl md:text-2xl lg:text-3xl text-slate-500 font-bold mb-12 sm:mb-16 md:mb-24 max-w-3xl mx-auto leading-relaxed">
-                   Connection established. Our engineers are ready to upgrade your business infrastructure to the next generation of intelligence.
-                 </p>
-                 <div className="flex flex-wrap justify-center gap-5 sm:gap-8 md:gap-12">
-                    <MagneticButton>
-                       <button className="px-8 sm:px-14 md:px-20 py-5 sm:py-7 md:py-10 bg-blue-600 text-white rounded-4xl sm:rounded-[2.5rem] md:rounded-[3.5rem] font-black text-xl sm:text-2xl md:text-4xl shadow-2xl shadow-blue-600/50 hover:bg-blue-700 transition-all">
-                          Initiate Sync
-                       </button>
-                    </MagneticButton>
-                    <MagneticButton>
-                       <button className="px-8 sm:px-14 md:px-20 py-5 sm:py-7 md:py-10 glass-card text-slate-900 rounded-4xl sm:rounded-[2.5rem] md:rounded-[3.5rem] font-black text-xl sm:text-2xl md:text-4xl hover:bg-slate-50 transition-all border-4 border-slate-100">
-                          Direct Feed
-                       </button>
-                    </MagneticButton>
-                 </div>
-              </motion.div>
-           </div>
-        </section>
-
-        <Footer />
       </div>
     </>
   );
