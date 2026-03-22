@@ -1,12 +1,14 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
-import { motion, useTransform, useSpring, useMotionValue, AnimatePresence, useScroll } from 'framer-motion';
+import { motion, useTransform, useSpring, useMotionValue, AnimatePresence } from 'framer-motion';
 import { 
-  BrainCircuit, Globe2, Zap, MonitorPlay, 
+  Zap, MonitorPlay, 
   TrendingUp, Megaphone, Palette, 
-  ArrowRight, ExternalLink, MousePointer2,
-  Users, ShieldCheck, Database, Cpu, Fingerprint, Menu, X,
-  Bot, Rocket, Sparkles, Code2, BarChart3, Layers, Leaf
+  ArrowRight,
+  ShieldCheck, Cpu, Fingerprint, Menu, X,
+  Bot, Rocket, Sparkles, Code2, Leaf
 } from 'lucide-react';
+// import Logo from './public/databudduLogo.png';
+import Typewriter from './components/Typewriter';
 
 // --- STYLES ---
 const customStyles = `
@@ -97,6 +99,13 @@ const customStyles = `
     left: 150%;
   }
 
+  .cyber-grid-inline {
+    background-image: linear-gradient(rgba(37, 99, 235, 0.08) 1px, transparent 1px),
+                      linear-gradient(90deg, rgba(37, 99, 235, 0.08) 1px, transparent 1px);
+    background-size: 50px 50px;
+    mask-image: radial-gradient(circle at center, black, transparent 80%);
+  }
+
   .orbit-path {
     border: 1px dashed rgba(37, 99, 235, 0.4);
     border-radius: 50%;
@@ -116,15 +125,15 @@ const customStyles = `
 // --- COMPONENTS ---
 
 const FallingLeaves = () => {
-  const leaves = useMemo(() => {
-    return Array.from({ length: 20 }).map((_, i) => ({
+  const [leaves] = useState(() =>
+    Array.from({ length: 20 }).map((_, i) => ({
       id: i,
       left: Math.random() * 100,
       delay: Math.random() * 10,
       duration: 12 + Math.random() * 10,
       size: 12 + Math.random() * 25,
-    }));
-  }, []);
+    }))
+  );
 
   return (
     <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -185,11 +194,11 @@ const HelloBot = () => {
 
   return (
     <div ref={botRef} className="relative w-80 h-96 flex flex-col items-center justify-center scale-110">
-      <div className="orbit-path w-[440px] h-[440px] border-blue-400/20"></div>
+      <div className="orbit-path w-110 h-110 border-blue-400/20"></div>
       <motion.div 
         animate={{ rotate: 360 }} 
         transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-        className="orbit-path w-[360px] h-[360px] border-blue-500/30 border-t-transparent"
+        className="orbit-path w-90 h-90 border-blue-500/30 border-t-transparent"
       ></motion.div>
 
       <motion.div
@@ -203,7 +212,7 @@ const HelloBot = () => {
           rotateX: { type: "spring", stiffness: 100, damping: 20 },
           y: { repeat: Infinity, duration: 4, ease: "easeInOut" }
         }}
-        className="relative z-20 w-64 h-64 bg-gradient-to-br from-blue-700 via-blue-600 to-indigo-900 rounded-[3.5rem] shadow-3xl border-8 border-white/30 flex flex-col items-center justify-center p-6 overflow-hidden"
+        className="relative z-20 w-64 h-64 bg-linear-to-br from-blue-700 via-blue-600 to-indigo-900 rounded-[3.5rem] shadow-2xl border-8 border-white/30 flex flex-col items-center justify-center p-6 overflow-hidden"
       >
         {/* Humanoid Eyebrows */}
         <div className="flex gap-12 mb-3 w-full justify-center">
@@ -255,7 +264,7 @@ const HelloBot = () => {
            />
         </motion.div>
 
-        <div className="absolute inset-0 bg-gradient-to-tr from-white/10 to-transparent pointer-events-none rounded-[3rem]"></div>
+        <div className="absolute inset-0 bg-linear-to-tr from-white/10 to-transparent pointer-events-none rounded-[3rem]"></div>
       </motion.div>
 
       <AnimatePresence>
@@ -265,7 +274,7 @@ const HelloBot = () => {
             animate={{ rotate: [0, -40, 0, -40, 0], opacity: 1, x: 90 }}
             exit={{ opacity: 0, x: 150 }}
             transition={{ duration: 3, times: [0, 0.2, 0.4, 0.6, 1] }}
-            className="absolute right-[-60px] top-1/2 z-30"
+            className="absolute -right-15 top-1/2 z-30"
           >
             <div className="relative">
               <div className="w-28 h-14 bg-blue-500 rounded-full border-4 border-white shadow-2xl flex items-center justify-center font-black text-white text-sm">
@@ -316,6 +325,8 @@ const MagneticButton = ({ children, className }) => {
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
+
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 20);
     window.addEventListener('scroll', handleScroll);
@@ -333,9 +344,13 @@ const Navbar = () => {
           <motion.div 
             whileHover={{ rotate: 360, scale: 1.15 }}
             transition={{ duration: 0.8, ease: "anticipate" }}
-            className="w-14 h-14 bg-gradient-to-br from-blue-600 to-blue-800 rounded-2xl flex items-center justify-center text-white shadow-2xl shadow-blue-500/50"
+            className="w-14 h-14 bg-linear-to-br from-blue-600 to-blue-800 rounded-2xl flex items-center justify-center text-white shadow-2xl shadow-blue-500/50"
           >
-            <Bot size={32} strokeWidth={2.5} />
+            <img
+              src='/databuddyLogo.png'
+              alt="DataBuddy Logo" 
+              className="w-full h-full object-contain"
+            />
           </motion.div>
           <span className="text-3xl font-black text-slate-900 tracking-tighter group-hover:text-blue-600 transition-colors">DataBuddy</span>
         </div>
@@ -352,7 +367,45 @@ const Navbar = () => {
             </button>
           </MagneticButton>
         </div>
+
+        {/* Mobile hamburger */}
+        <button
+          className="md:hidden flex items-center justify-center w-12 h-12 rounded-xl bg-blue-50 text-blue-600 hover:bg-blue-100 transition-all"
+          onClick={() => setMobileOpen((v) => !v)}
+          aria-label="Toggle menu"
+        >
+          {mobileOpen ? <X size={24} /> : <Menu size={24} />}
+        </button>
       </div>
+
+      {/* Mobile dropdown */}
+      <AnimatePresence>
+        {mobileOpen && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.3 }}
+            className="md:hidden overflow-hidden bg-white/95 backdrop-blur-2xl border-t border-blue-100 shadow-xl"
+          >
+            <div className="flex flex-col px-6 py-6 gap-4">
+              {['Home', 'About', 'Services'].map((item) => (
+                <a
+                  key={item}
+                  href={`#${item.toLowerCase()}`}
+                  onClick={() => setMobileOpen(false)}
+                  className="text-slate-700 font-bold text-xl py-3 border-b border-slate-100 hover:text-blue-600 transition-colors"
+                >
+                  {item}
+                </a>
+              ))}
+              <button className="mt-2 bg-blue-600 text-white px-8 py-4 rounded-2xl font-black hover:bg-blue-700 transition-all shadow-xl shadow-blue-500/40 text-left">
+                Start Growing
+              </button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </motion.nav>
   );
 };
@@ -361,7 +414,7 @@ const HeroSection = () => {
   return (
     <section id="home" className="relative pt-48 pb-40 overflow-hidden">
       <FallingLeaves />
-      <div className="absolute top-0 right-0 w-2/3 h-full opacity-30 -z-10 bg-gradient-to-b from-blue-200/40 to-transparent"></div>
+      <div className="absolute top-0 right-0 w-2/3 h-full opacity-30 -z-10 bg-linear-to-b from-blue-200/40 to-transparent"></div>
       
       <div className="max-w-7xl mx-auto px-6 relative z-30 grid lg:grid-cols-2 gap-20 items-center">
         <motion.div
@@ -378,18 +431,18 @@ const HeroSection = () => {
           
           <h1 className="text-7xl md:text-[8.5rem] font-black tracking-tight text-slate-900 mb-10 leading-[0.88] pr-12 overflow-visible">
             <span className="block hover:translate-x-6 hover:text-blue-600 transition-all duration-500 cursor-default py-2">Your Smartest</span>
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-800 via-blue-500 to-cyan-500 drop-shadow-sm hover:skew-x-3 transition-all block py-2 whitespace-nowrap pr-4">Digital Growth </span>
+            <span className="text-transparent bg-clip-text bg-linear-to-r from-blue-800 via-blue-500 to-cyan-500 drop-shadow-sm hover:skew-x-3 transition-all block py-2 whitespace-nowrap pr-4">Digital Growth </span>
             {/* Added padding-right (pr-20) and a subtle margin adjustment to ensure "Partner" isn't clipped */}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-indigo-600 block py-2 pr-20 -mr-10">Partner.</span>
+            <span className="text-transparent bg-clip-text bg-linear-to-r from-blue-500 to-indigo-600 block py-2 pr-20 -mr-10">Partner.</span>
           </h1>
           
-          <p className="text-2xl text-slate-600 max-w-xl mb-14 font-medium leading-relaxed border-l-8 border-blue-600 pl-10">
-            Harness the predictive power of AI to outpace the competition. We don't just build sites; we build high-performance robotic growth systems.
+          <p className="text-2xl text-slate-600 max-w-xl mb-14 font-medium leading-relaxed border-l-8 border-blue-600 pl-10 ">
+            <Typewriter text="Harness the predictive power of AI to outpace the competition. We don't just build sites; we build high-performance robotic growth systems." />
           </p>
           
           <div className="flex flex-wrap gap-8">
             <MagneticButton>
-              <button className="px-12 py-6 bg-blue-600 text-white rounded-3xl font-black shadow-3xl shadow-blue-600/50 hover:bg-blue-700 transition-all flex items-center gap-4 text-xl overflow-hidden group">
+              <button className="px-12 py-6 bg-blue-600 text-white rounded-3xl font-black shadow-2xl shadow-blue-600/50 hover:bg-blue-700 transition-all flex items-center gap-4 text-xl overflow-hidden group">
                 Accelerate Now <ArrowRight size={24} className="group-hover:translate-x-3 transition-transform" />
               </button>
             </MagneticButton>
@@ -405,7 +458,7 @@ const HeroSection = () => {
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 1, delay: 0.5 }}
-          className="relative h-[700px] flex items-center justify-center"
+          className="relative h-175 flex items-center justify-center"
         >
           <HelloBot />
 
@@ -454,7 +507,7 @@ const ServiceCard = ({ icon: Icon, title, desc, delay }) => {
       transition={{ duration: 0.8, delay }}
       className="glass-card p-14 rounded-[5rem] group border-2 border-transparent hover:border-blue-500 cursor-pointer"
     >
-      <div className="w-24 h-24 bg-blue-600 rounded-[2rem] flex items-center justify-center text-white mb-12 shadow-3xl shadow-blue-600/40 group-hover:scale-125 group-hover:rotate-12 transition-all duration-700">
+      <div className="w-24 h-24 bg-blue-600 rounded-4xl flex items-center justify-center text-white mb-12 shadow-2xl shadow-blue-600/40 group-hover:scale-125 group-hover:rotate-12 transition-all duration-700">
         <Icon size={48} />
       </div>
       <h3 className="text-5xl font-black mb-8 text-slate-900 group-hover:text-blue-600 transition-colors tracking-tighter">{title}</h3>
@@ -493,10 +546,10 @@ const InteractiveShowcase = () => {
           <motion.div 
             key={i}
             whileHover={{ scale: 1.05, y: -30, rotate: 2 }}
-            className="w-[700px] h-[550px] flex-shrink-0 relative rounded-[5rem] overflow-hidden group shadow-[0_40px_100px_-20px_rgba(37,99,235,0.4)]"
+            className="w-175 h-137.5 shrink-0 relative rounded-[5rem] overflow-hidden group shadow-[0_40px_100px_-20px_rgba(37,99,235,0.4)]"
           >
             <img src={img.url} className="absolute inset-0 w-full h-full object-cover group-hover:scale-125 transition-transform duration-[3s]" alt={img.title} />
-            <div className="absolute inset-0 bg-gradient-to-t from-blue-950/95 via-blue-900/20 to-transparent"></div>
+            <div className="absolute inset-0 bg-linear-to-t from-blue-950/95 via-blue-900/20 to-transparent"></div>
             <div className="absolute inset-0 p-20 flex flex-col justify-end">
                <span className="text-blue-400 font-black tracking-[0.5em] text-lg mb-6 uppercase">{img.tag}</span>
                <h3 className="text-7xl font-black text-white mb-10 translate-y-6 group-hover:translate-y-0 transition-transform duration-700">{img.title}</h3>
@@ -510,10 +563,17 @@ const InteractiveShowcase = () => {
   );
 };
 
+const ecosystemColorMap = {
+  blue: "bg-blue-600",
+  orange: "bg-orange-600",
+  cyan: "bg-cyan-600",
+  purple: "bg-purple-600",
+};
+
 const EcosystemSection = () => {
    return (
       <section className="py-52 relative">
-         <div className="cyber-grid"></div>
+         <div className="cyber-grid-inline absolute inset-0 pointer-events-none"></div>
          <div className="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-40 items-center">
             <div className="relative">
                <motion.div 
@@ -534,7 +594,7 @@ const EcosystemSection = () => {
                       whileHover={{ scale: 1.15, rotate: i % 2 === 0 ? 8 : -8 }}
                       className="glass-card p-14 rounded-[5rem] flex flex-col items-center gap-8 border-2 border-white/50"
                     >
-                       <div className={`w-28 h-28 rounded-[2.5rem] bg-${item.color}-600 flex items-center justify-center text-white shadow-2xl`}>
+                       <div className={`w-28 h-28 rounded-[2.5rem] ${ecosystemColorMap[item.color]} flex items-center justify-center text-white shadow-2xl`}>
                           <item.icon size={56} />
                        </div>
                        <span className="text-3xl font-black text-slate-900 tracking-tighter">{item.label}</span>
@@ -575,11 +635,12 @@ const EcosystemSection = () => {
 
 const Footer = () => (
   <footer className="bg-slate-950 py-40 rounded-t-[7rem] overflow-hidden relative">
-     <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-blue-700 via-cyan-400 to-blue-700"></div>
+     <div className="absolute top-0 left-0 w-full h-2 bg-linear-to-r from-blue-700 via-cyan-400 to-blue-700"></div>
      <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-3 gap-32 items-center mb-40">
         <div className="flex flex-col gap-12">
            <div className="flex items-center gap-6">
-              <div className="w-20 h-20 bg-blue-600 rounded-[2rem] flex items-center justify-center text-white shadow-3xl shadow-blue-500/30"><Bot size={44}/></div>
+           <div className="w-20 h-20 bg-blue-600 rounded-4xl flex items-center justify-center text-white shadow-2xl shadow-blue-500/30"><img src="/databuddyLogo.png" alt="DataBuddy Logo" 
+             className="w-full h-full object-contain"/></div>
               <span className="text-5xl font-black text-white tracking-tighter">DataBuddy</span>
            </div>
            <p className="text-slate-400 text-2xl font-bold leading-relaxed">Forging the future of human-AI collaboration for global enterprise through robotic precision.</p>
@@ -604,7 +665,7 @@ const Footer = () => (
      <div className="max-w-7xl mx-auto px-6 pt-20 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-12">
         <p className="text-slate-600 font-black text-lg">© 2026 DATABUDDY GLOBAL PROTOCOL. ALL RIGHTS RESERVED.</p>
         <div className="flex gap-12">
-           {['In', 'Tw', 'Ig'].map(s => <a key={s} href="#" className="w-16 h-16 rounded-[1.5rem] border border-white/10 flex items-center justify-center text-white hover:bg-blue-600 hover:border-blue-600 transition-all font-black text-2xl">{s}</a>)}
+           {['In', 'Tw', 'Ig'].map(s => <a key={s} href="#" className="w-16 h-16 rounded-3xl border border-white/10 flex items-center justify-center text-white hover:bg-blue-600 hover:border-blue-600 transition-all font-black text-2xl">{s}</a>)}
         </div>
      </div>
   </footer>
@@ -647,7 +708,7 @@ export default function App() {
         <EcosystemSection />
         
         <section id="contact" className="py-60 px-6">
-           <div className="max-w-7xl mx-auto glass-card rounded-[8rem] p-20 md:p-40 text-center relative overflow-hidden border-4 border-blue-50 shadow-3xl">
+           <div className="max-w-7xl mx-auto glass-card rounded-[8rem] p-20 md:p-40 text-center relative overflow-hidden border-4 border-blue-50 shadow-2xl">
               <div className="absolute inset-0 opacity-10 cyber-grid"></div>
               <motion.div initial={{ opacity: 0, scale: 0.9 }} whileInView={{ opacity: 1, scale: 1 }} transition={{ duration: 0.8 }}>
                  <h2 className="text-8xl md:text-[10rem] font-black text-slate-900 mb-16 tracking-tighter leading-[0.8]">
@@ -658,7 +719,7 @@ export default function App() {
                  </p>
                  <div className="flex flex-wrap justify-center gap-12">
                     <MagneticButton>
-                       <button className="px-20 py-10 bg-blue-600 text-white rounded-[3.5rem] font-black text-4xl shadow-3xl shadow-blue-600/50 hover:bg-blue-700 transition-all">
+                       <button className="px-20 py-10 bg-blue-600 text-white rounded-[3.5rem] font-black text-4xl shadow-2xl shadow-blue-600/50 hover:bg-blue-700 transition-all">
                           Initiate Sync
                        </button>
                     </MagneticButton>
